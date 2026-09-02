@@ -25,6 +25,38 @@ const livros = [
 ]
 
 
+/**
+ * @openapi
+ * /livros:
+ *   get:
+ *     summary: Lista livros
+ *     description: Retorna a lista de livros, com filtro opcional por título
+ *     parameters:
+ *       - in: query
+ *         name: titulo
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Filtra os livros pelo título
+ *     responses:
+ *       200:
+ *         description: Lista de livros retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   titulo:
+ *                     type: string
+ *                   autor:
+ *                     type: string
+ *                   disponivel:
+ *                     type: boolean
+ */
 app.get('/livros', (req, res) =>{
     const titulo = req.query?.titulo || null
     let livrosFiltrados = null
@@ -39,9 +71,9 @@ app.get('/livros', (req, res) =>{
 
 /**
  * @openapi
- * /produtos/{id}:
+ * /livros/{id}:
  *   get:
- *     summary: Busca um produto pelo id
+ *     summary: Busca um livro pelo id
  *     parameters:
  *       - in: path
  *         name: id
@@ -50,9 +82,9 @@ app.get('/livros', (req, res) =>{
  *           type: integer
  *     responses:
  *       200:
- *         description: Produto encontrado
+ *         description: Livro encontrado
  *       404:
- *         description: Produto não encontrado
+ *         description: Livro não encontrado
  */
 app.get('/livros/:id', (req, res) =>{
     const id = Number(req.params?.id);
@@ -68,6 +100,34 @@ app.get('/livros/:id', (req, res) =>{
 });
 
 
+/**
+ * @openapi
+ * /livros:
+ *   post:
+ *     summary: Cria um novo livro
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - titulo
+ *               - autor
+ *             properties:
+ *               titulo:
+ *                 type: string
+ *               autor:
+ *                 type: string
+ *               disponivel:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       201:
+ *         description: Livro criado com sucesso
+ *       400:
+ *         description: Dados inválidos
+ */
 app.post('/livros', (req, res)=>{
 
     const titulo = req.body?.titulo || null;
@@ -94,6 +154,39 @@ app.post('/livros', (req, res)=>{
 
 });
 
+/**
+ * @openapi
+ * /livros/{id}:
+ *   put:
+ *     summary: Atualiza um livro pelo id
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               titulo:
+ *                 type: string
+ *                 example: Memórias Póstumas de Brás Cubas
+ *               autor:
+ *                 type: string
+ *                 example: Machado de Assis
+ *               disponivel:
+ *                 type: boolean
+ *                 example: false
+ *     responses:
+ *       200:
+ *         description: Livro atualizado com sucesso
+ *       404:
+ *         description: Livro não encontrado
+ */
 app.put('/livros/:id', (req, res) => {
     const id = Number(req.params.id);
     const livro = livros.find(item => item.id === id);
@@ -116,6 +209,23 @@ app.put('/livros/:id', (req, res) => {
     res.status(200).json(livro)
 });
 
+/**
+ * @openapi
+ * /livros/{id}:
+ *   delete:
+ *     summary: Exclui um livro pelo id
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       204:
+ *         description: Livros excluido com sucesso
+ *       404:
+ *         description: Livros não encontrado
+ */
 app.delete('/livros/:id', (req, res) =>{
     const id = Number(req.params.id);
     const indice = livros.findIndex(item => item.id === id)
